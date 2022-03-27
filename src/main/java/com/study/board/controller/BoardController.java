@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -23,7 +24,7 @@ public class BoardController {
 
     @PostMapping("/board/writepro")
     public String boardwritePro(Board board) {
-        System.out.println("board/writepro 실행");
+
         boardService.write(board);
 
         return "";
@@ -35,5 +36,41 @@ public class BoardController {
         model.addAttribute("list", boardService.boardList());
 
         return "boardlist";
+    }
+
+    @GetMapping("/board/view")  // localhost:8080//board/view?id=1
+    public String boardView(Model model, Integer id) {
+
+        model.addAttribute("board", boardService.boardView(id));
+
+        return "boardView";
+    }
+
+    @GetMapping("/board/delete")
+    public String boardDelete(Integer id) {
+
+        boardService.boardDelete(id);
+
+        return "redirect:/board/list";
+    }
+
+    @GetMapping("/board/modify/{id}")
+    public String boardModify(@PathVariable("id") Integer id, Model model) {
+        // url의 modify의 뒤쪽 {id}가 @PathVariable("id") 에 인식이 된다음 Integer id로 들어온다는 의미
+        model.addAttribute("board", boardService.boardView(id));
+
+        return "boardmodify";
+    }
+
+    @PostMapping("/board/update/{id}")
+    public String boardUpdate(@PathVariable("id") Integer id, Board board) {
+
+        Board boardTemp = boardService.boardView(id);  // 기존에 있던 내용 가지고오고
+        boardTemp.setTitle(board.getTitle());  // 수정한 title 덮어씌운다
+        boardTemp.setContent(board.getContent());  // 수정한 content 덮어씌운다
+
+        boardService.write(boardTemp);
+
+        return "redirect:/board/list";
     }
 }

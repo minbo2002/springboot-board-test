@@ -29,7 +29,9 @@
             <tbody>
                 <tr th:each="board : ${list}">  <!-- each : 반복문 (board가 없어질때까지) -->
                     <td th:text="${board.title}">1</td>
-                    <td th:text="${board.content}">제목입니다</td>
+                    <td>
+                        <a th:text="${board.content}" th:href="@{/board/view(id=${board.id})}"></a>
+                    </td>
                 </tr>
             </tbody>
 
