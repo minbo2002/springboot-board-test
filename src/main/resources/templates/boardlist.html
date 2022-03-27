@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>게시물 페이지</title>
+</head>
+
+    <style>
+
+        .layout {
+            width: 500px;
+            margin: 0 auto;   <!-- 양쪽 여백을 위아래는 0, 좌우는 auto -->
+            margin-top: 40px;
+        }
+
+    </style>
+
+<body>
+
+    <div class="layout">
+
+        <table>
+            <thead>
+                <tr>
+                    <th>제목</th>
+                    <th>글번호</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="board : ${list}">  <!-- each : 반복문 (board가 없어질때까지) -->
+                    <td th:text="${board.title}">1</td>
+                    <td th:text="${board.content}">제목입니다</td>
+                </tr>
+            </tbody>
+
+        </table>
+
+    </div>
+
+</body>
+</html>
