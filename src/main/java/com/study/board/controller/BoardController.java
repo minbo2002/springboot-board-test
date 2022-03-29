@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller   // spring이 실행될때 Controller라고 인식함
 public class BoardController {
@@ -23,11 +24,14 @@ public class BoardController {
     }
 
     @PostMapping("/board/writepro")
-    public String boardwritePro(Board board) {
+    public String boardwritePro(Board board, Model model, MultipartFile file) throws Exception {
 
-        boardService.write(board);
+        boardService.write(board, file);
 
-        return "";
+        model.addAttribute("message", "글 작성이 완료되었습니다.");
+        model.addAttribute("searchUrl", "/board/list");
+
+        return "message";
     }
 
     @GetMapping("/board/list")
@@ -47,11 +51,15 @@ public class BoardController {
     }
 
     @GetMapping("/board/delete")
-    public String boardDelete(Integer id) {
+    public String boardDelete(Integer id, Model model) {
 
         boardService.boardDelete(id);
 
-        return "redirect:/board/list";
+        model.addAttribute("message", "글이 삭제되었습니다.");
+        model.addAttribute("searchUrl", "/board/list");
+
+        // return "redirect:/board/list";
+        return "message";
     }
 
     @GetMapping("/board/modify/{id}")
@@ -63,13 +71,13 @@ public class BoardController {
     }
 
     @PostMapping("/board/update/{id}")
-    public String boardUpdate(@PathVariable("id") Integer id, Board board) {
+    public String boardUpdate(@PathVariable("id") Integer id, Board board, MultipartFile file) throws Exception {
 
         Board boardTemp = boardService.boardView(id);  // 기존에 있던 내용 가지고오고
         boardTemp.setTitle(board.getTitle());  // 수정한 title 덮어씌운다
         boardTemp.setContent(board.getContent());  // 수정한 content 덮어씌운다
 
-        boardService.write(boardTemp);
+        boardService.write(boardTemp, file);
 
         return "redirect:/board/list";
     }
