@@ -3,6 +3,10 @@ package com.study.board.controller;
 import com.study.board.entity.Board;
 import com.study.board.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,9 +39,23 @@ public class BoardController {
     }
 
     @GetMapping("/board/list")
-    public String boardList(Model model) {
+    public String boardList(Model model, @PageableDefault(page = 0, size = 10, sort = "id",
+            direction = Sort.Direction.DESC) Pageable pageable) {  // Pageable은 인터페이스
+        // page : dafault 페이지   size : 한페이지 게시글 수
+        // sort : 정렬기준 컬럼     direction : 정렬 순서 (ASC오름차순, DESC내림차순)
 
-        model.addAttribute("list", boardService.boardList());
+        Page<Board> list = boardService.boardList(pageable);
+
+        int nowPage = list.getPageable().getPageNumber() + 1;  // Pageable 인터페이스에서 넘어온 현재페이지를 가져올수 있다.
+        // Pageable 인터페이스는 첫페이지가 0부터 시작하기 때문에 우리가 보는 첫페이지를 1페이지부터 시작하게 하려면 +1 해줘야함
+
+        int startPage = Math.max(nowPage -4, 1);
+        int endPage = Math.min(nowPage +5, list.getTotalPages());  // 원래 페이지를 뛰어넘는 페이지에 못가도록 Math.min() 메서드 사용
+
+        model.addAttribute("list", list);
+        model.addAttribute("nowPage", nowPage);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
 
         return "boardlist";
     }

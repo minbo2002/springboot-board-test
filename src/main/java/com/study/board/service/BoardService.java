@@ -3,6 +3,8 @@ package com.study.board.service;
 import com.study.board.entity.Board;
 import com.study.board.repository.BoardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,9 +40,11 @@ public class BoardService {
     }
 
     // 게시글 리스트 처리
-    public List<Board> boardList() {
+    public Page<Board> boardList(Pageable pageable) {
+        // Page는 인터페이스 (원래 페이징 처리는 쿼리문도 적고 페이징할 클래스도 따로 생성해줘야하는데
+        // JPA의 .findAll() 메서드 사용해서 pageable이라는 인터페이스를 넘겨주게 되면은 페이징을 간단하게 처리가능.
 
-        return boardRepository.findAll();  // JPA의 .findAll() : List내부의 제네릭인 Board 클래스를 반환
+        return boardRepository.findAll(pageable);  // JPA의 .findAll() : List내부의 제네릭인 Board 클래스를 반환
     }
 
     // 특정 게시글 불러오기
