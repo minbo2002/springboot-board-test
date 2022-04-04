@@ -39,12 +39,26 @@ public class BoardController {
     }
 
     @GetMapping("/board/list")
-    public String boardList(Model model, @PageableDefault(page = 0, size = 10, sort = "id",
-            direction = Sort.Direction.DESC) Pageable pageable) {  // Pageable은 인터페이스
+    public String boardList(Model model,
+                            @PageableDefault(page = 0, size = 10, sort = "id",
+                                    direction = Sort.Direction.DESC) Pageable pageable,
+                            String searchKeyword) {
+        // Pageable은 인터페이스
         // page : dafault 페이지   size : 한페이지 게시글 수
         // sort : 정렬기준 컬럼     direction : 정렬 순서 (ASC오름차순, DESC내림차순)
 
-        Page<Board> list = boardService.boardList(pageable);
+        Page<Board> list = null;
+        // Page는 인터페이스
+
+        if(searchKeyword == null) {  // 검색할 단어 없는경우 이전 board 그대로 보여줌
+
+            list = boardService.boardList(pageable);
+
+        }else {  //  검색할 단어가 포함된 board를 보여줌
+
+            list = boardService.boardSearchList(searchKeyword, pageable);
+        }
+
 
         int nowPage = list.getPageable().getPageNumber() + 1;  // Pageable 인터페이스에서 넘어온 현재페이지를 가져올수 있다.
         // Pageable 인터페이스는 첫페이지가 0부터 시작하기 때문에 우리가 보는 첫페이지를 1페이지부터 시작하게 하려면 +1 해줘야함

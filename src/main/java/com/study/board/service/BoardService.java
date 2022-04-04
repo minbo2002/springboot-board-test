@@ -42,7 +42,7 @@ public class BoardService {
     // 게시글 리스트 처리
     public Page<Board> boardList(Pageable pageable) {
         // Page는 인터페이스 (원래 페이징 처리는 쿼리문도 적고 페이징할 클래스도 따로 생성해줘야하는데
-        // JPA의 .findAll() 메서드 사용해서 pageable이라는 인터페이스를 넘겨주게 되면은 페이징을 간단하게 처리가능.
+        // JPA의 .findAll() 메서드 사용해서 Pageable이라는 인터페이스를 넘겨주게 되면은 페이징을 간단하게 처리가능.
 
         return boardRepository.findAll(pageable);  // JPA의 .findAll() : List내부의 제네릭인 Board 클래스를 반환
     }
@@ -59,5 +59,10 @@ public class BoardService {
     public void boardDelete(Integer id) {
 
         boardRepository.deleteById(id);
+    }
+
+    public Page<Board> boardSearchList(String searchKeyword, Pageable pageable) {
+        // Pageable 인터페이스 이용해서 페이징 간단하게 처리
+        return boardRepository.findByTitleContaining(searchKeyword, pageable);
     }
 }
